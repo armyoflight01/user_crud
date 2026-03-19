@@ -1,5 +1,39 @@
 <?php
-require_once __DIR__ . '/../config/Database.php';
+// config/db.php - Combined Database connection and User Class
+
+class Database {
+    private $host = 'localhost';
+    private $dbname = 'user_crud';
+    private $username = 'root';
+    private $password = '';
+    private $pdo;
+    private static $instance = null;
+
+    private function __construct() {
+        try {
+            $this->pdo = new PDO(
+                "mysql:host={$this->host};dbname={$this->dbname}",
+                $this->username,
+                $this->password
+            );
+            $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            $this->pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
+        } catch(PDOException $e) {
+            die("Connection failed: " . $e->getMessage());
+        }
+    }
+
+    public static function getInstance() {
+        if (self::$instance === null) {
+            self::$instance = new self();
+        }
+        return self::$instance;
+    }
+
+    public function getConnection() {
+        return $this->pdo;
+    }
+}
 
 class User {
     private $pdo;
@@ -13,12 +47,10 @@ class User {
     // User registration with photo upload
     public function register($username, $email, $password, $profilePhoto = 'default.jpg') {
         try {
-            // Check if user already exists
             if ($this->emailExists($email)) {
                 return ['success' => false, 'message' => 'Email already exists'];
             }
 
-            // Hash password
             $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
             
             $sql = "INSERT INTO users (username, email, password, role, profile_photo, created_at) 
@@ -46,17 +78,14 @@ class User {
     // Login (for both admin and users)
     public function login($email, $password, $selectedRole) {
         try {
-            // Special case for admin
             if ($email === self::ADMIN_EMAIL && $password === self::ADMIN_PASSWORD) {
                 if ($selectedRole === 'admin') {
-                    // Check if admin exists in database
                     $sql = "SELECT * FROM users WHERE email = :email";
                     $stmt = $this->pdo->prepare($sql);
                     $stmt->execute([':email' => $email]);
                     $user = $stmt->fetch();
 
                     if (!$user) {
-                        // Create admin if not exists
                         $hashedPassword = password_hash(self::ADMIN_PASSWORD, PASSWORD_DEFAULT);
                         $sql = "INSERT INTO users (username, email, password, role, profile_photo, created_at) 
                                 VALUES (:username, :email, :password, 'admin', :profile_photo, NOW())";
@@ -83,7 +112,6 @@ class User {
                 }
             }
 
-            // Regular user login
             $sql = "SELECT * FROM users WHERE email = :email AND role = 'user'";
             $stmt = $this->pdo->prepare($sql);
             $stmt->execute([':email' => $email]);
@@ -104,7 +132,6 @@ class User {
         }
     }
 
-    // Get all users (for admin)
     public function getAllUsers() {
         try {
             $sql = "SELECT * FROM users ORDER BY created_at DESC";
@@ -115,7 +142,6 @@ class User {
         }
     }
 
-    // Get user by ID
     public function getUserById($id) {
         try {
             $sql = "SELECT * FROM users WHERE id = :id";
@@ -127,7 +153,6 @@ class User {
         }
     }
 
-    // Update user (admin function) with photo upload
     public function updateUser($id, $username, $email, $role, $profilePhoto = null, $newPassword = null) {
         try {
             $sql = "UPDATE users SET username = :username, email = :email, role = :role";
@@ -159,10 +184,8 @@ class User {
         }
     }
 
-    // Delete user (admin function)
     public function deleteUser($id) {
         try {
-            // Get user data to delete profile photo
             $user = $this->getUserById($id);
             
             if ($user && $user['profile_photo'] != 'default.jpg') {
@@ -181,7 +204,6 @@ class User {
         }
     }
 
-    // Upload profile photo
     public function uploadProfilePhoto($file) {
         if ($file['error'] == 0) {
             $allowed = ['jpg', 'jpeg', 'png', 'gif'];
@@ -189,11 +211,9 @@ class User {
             $ext = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
             
             if (in_array($ext, $allowed)) {
-                // Generate unique filename
                 $newFilename = time() . '_' . uniqid() . '.' . $ext;
                 $uploadPath = __DIR__ . '/../uploads/' . $newFilename;
                 
-                // Create uploads directory if it doesn't exist
                 if (!is_dir(__DIR__ . '/../uploads')) {
                     mkdir(__DIR__ . '/../uploads', 0777, true);
                 }
@@ -206,7 +226,6 @@ class User {
         return null;
     }
 
-    // Check if email exists
     private function emailExists($email) {
         $sql = "SELECT id FROM users WHERE email = :email";
         $stmt = $this->pdo->prepare($sql);
@@ -214,23 +233,19 @@ class User {
         return $stmt->fetch() ? true : false;
     }
 
-    // Logout
     public function logout() {
         session_destroy();
         return true;
     }
 
-    // Check if logged in
     public function isLoggedIn() {
         return isset($_SESSION['user_id']);
     }
 
-    // Check if admin
     public function isAdmin() {
         return (isset($_SESSION['role']) && $_SESSION['role'] == 'admin');
     }
 
-    // Get current user ID
     public function getCurrentUserId() {
         return $_SESSION['user_id'] ?? null;
     }

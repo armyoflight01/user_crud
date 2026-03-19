@@ -1,8 +1,7 @@
 <?php
-require_once 'classes/User.php';
+require_once 'config/db.php';
 session_start();
 
-// Redirect if already logged in
 if (isset($_SESSION['user_id'])) {
     header("Location: " . ($_SESSION['role'] == 'admin' ? 'admin/dashboard.php' : 'user/dashboard.php'));
     exit();
@@ -46,11 +45,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 </head>
 <body>
     <div class="page-wrapper">
-        <!-- Navbar -->
         <nav class="navbar">
             <div class="container">
                 <a href="index.php" class="navbar-brand">
-                    <i class="fas fa-users-cog"></i>Loquinario User Management System
+                    <i class="fas fa-users-cog"></i> Loquinario User Management System
                 </a>
                 <div class="navbar-nav">
                     <a href="login.php" class="nav-link active">
@@ -63,7 +61,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             </div>
         </nav>
 
-        <!-- Main Content -->
         <div class="container">
             <div class="row justify-content-center">
                 <div class="col-md-6">
@@ -107,7 +104,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                         <option value="user">User</option>
                                         <option value="admin">Admin</option>
                                     </select>
-                                    
                                 </div>
 
                                 <button type="submit" class="btn btn-primary btn-block">
@@ -127,14 +123,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             </div>
         </div>
 
-        <!-- Footer -->
         <footer>
             <div class="container">
                 <p class="text-center">&copy; 2026 Russell Evan Loquinario User Management System. All rights reserved.</p>
             </div>
         </footer>
     </div>
-
-    
 </body>
 </html>

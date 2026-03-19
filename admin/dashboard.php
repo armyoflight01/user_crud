@@ -1,10 +1,9 @@
 <?php
-require_once '../classes/User.php';
+require_once '../config/db.php';
 session_start();
 
 $user = new User();
 
-// Check if user is logged in and is admin
 if (!$user->isLoggedIn() || !$user->isAdmin()) {
     header("Location: ../login.php");
     exit();
@@ -24,7 +23,6 @@ $users = $user->getAllUsers();
 </head>
 <body>
     <div class="page-wrapper">
-        <!-- Navbar -->
         <nav class="navbar">
             <div class="container">
                 <a href="dashboard.php" class="navbar-brand">
@@ -41,9 +39,7 @@ $users = $user->getAllUsers();
             </div>
         </nav>
 
-        <!-- Main Content -->
         <div class="container">
-            <!-- Stats Cards -->
             <div class="grid">
                 <div class="dashboard-card">
                     <div class="card-icon primary">
@@ -82,7 +78,6 @@ $users = $user->getAllUsers();
                 </div>
             </div>
 
-            <!-- Users Table -->
             <div class="card">
                 <div class="card-header">
                     <h4><i class="fas fa-users"></i> User Management</h4>
@@ -170,7 +165,6 @@ $users = $user->getAllUsers();
             </div>
         </div>
 
-        <!-- Footer -->
         <footer>
             <div class="container">
                 <p class="text-center">&copy; 2026 Russell Evan Loquinario User Management System. All rights reserved.</p>

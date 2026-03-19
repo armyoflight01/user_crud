@@ -1,8 +1,7 @@
 <?php
-require_once 'classes/User.php';
+require_once 'config/db.php';
 session_start();
 
-// Redirect if already logged in
 if (isset($_SESSION['user_id'])) {
     header("Location: " . ($_SESSION['role'] == 'admin' ? 'admin/dashboard.php' : 'user/dashboard.php'));
     exit();
@@ -18,7 +17,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $password = $_POST['password'];
     $confirmPassword = $_POST['confirm_password'];
 
-    // Validation
     if (empty($username) || empty($email) || empty($password) || empty($confirmPassword)) {
         $error = "All fields are required";
     } elseif ($password !== $confirmPassword) {
@@ -28,7 +26,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
         $error = "Invalid email format";
     } else {
-        // Handle profile photo upload
         $profilePhoto = 'default.jpg';
         if (isset($_FILES['profile_photo']) && $_FILES['profile_photo']['error'] == 0) {
             $uploadedFile = $user->uploadProfilePhoto($_FILES['profile_photo']);
@@ -59,11 +56,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 </head>
 <body>
     <div class="page-wrapper">
-        <!-- Navbar -->
         <nav class="navbar">
             <div class="container">
                 <a href="index.php" class="navbar-brand">
-                    <i class="fas fa-users-cog"></i>Loquinario User Management System
+                    <i class="fas fa-users-cog"></i> Loquinario User Management System
                 </a>
                 <div class="navbar-nav">
                     <a href="login.php" class="nav-link">
@@ -76,7 +72,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             </div>
         </nav>
 
-        <!-- Main Content -->
         <div class="container">
             <div class="row justify-content-center">
                 <div class="col-md-6">
@@ -171,7 +166,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             </div>
         </div>
 
-        <!-- Footer -->
         <footer>
             <div class="container">
                 <p class="text-center">&copy; 2026 Russell Evan Loquinario User Management System. All rights reserved.</p>
@@ -180,30 +174,25 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     </div>
 
     <script>
-        // Image preview functionality
         const uploadArea = document.getElementById('uploadArea');
         const fileInput = document.getElementById('profile_photo');
         const imagePreview = document.getElementById('imagePreview');
         const previewImg = imagePreview.querySelector('img');
         const removeBtn = document.getElementById('removeImage');
 
-        // Click on upload area triggers file input
         uploadArea.addEventListener('click', function() {
             fileInput.click();
         });
 
-        // Handle file selection
         fileInput.addEventListener('change', function(e) {
             const file = e.target.files[0];
             if (file) {
-                // Check file size (max 5MB)
                 if (file.size > 5 * 1024 * 1024) {
                     alert('File is too large. Maximum size is 5MB.');
                     fileInput.value = '';
                     return;
                 }
 
-                // Check file type
                 const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif'];
                 if (!validTypes.includes(file.type)) {
                     alert('Please upload a valid image file (JPG, JPEG, PNG, GIF)');
@@ -221,7 +210,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             }
         });
 
-        // Remove image
         removeBtn.addEventListener('click', function() {
             fileInput.value = '';
             imagePreview.style.display = 'none';
@@ -229,7 +217,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             previewImg.src = '#';
         });
 
-        // Drag and drop functionality
         uploadArea.addEventListener('dragover', function(e) {
             e.preventDefault();
             this.style.borderColor = 'var(--success-color)';

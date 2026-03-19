@@ -1,10 +1,9 @@
 <?php
-require_once '../classes/User.php';
+require_once '../config/db.php';
 session_start();
 
 $user = new User();
 
-// Check if user is logged in and is admin
 if (!$user->isLoggedIn() || !$user->isAdmin()) {
     header("Location: ../login.php");
     exit();
@@ -30,7 +29,6 @@ if (!$userData) {
 </head>
 <body>
     <div class="page-wrapper">
-        <!-- Navbar -->
         <nav class="navbar">
             <div class="container">
                 <a href="dashboard.php" class="navbar-brand">
@@ -47,7 +45,6 @@ if (!$userData) {
             </div>
         </nav>
 
-        <!-- Main Content -->
         <div class="container">
             <div class="profile-container">
                 <div class="card">
@@ -89,7 +86,6 @@ if (!$userData) {
             </div>
         </div>
 
-        <!-- Footer -->
         <footer>
             <div class="container">
                 <p class="text-center">&copy; 2024 User Management System. All rights reserved.</p>

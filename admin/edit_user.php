@@ -1,10 +1,9 @@
 <?php
-require_once '../classes/User.php';
+require_once '../config/db.php';
 session_start();
 
 $user = new User();
 
-// Check if user is logged in and is admin
 if (!$user->isLoggedIn() || !$user->isAdmin()) {
     header("Location: ../login.php");
     exit();
@@ -14,7 +13,6 @@ $id = $_GET['id'] ?? 0;
 $error = '';
 $success = '';
 
-// Get user data
 $userData = $user->getUserById($id);
 
 if (!$userData) {
@@ -28,12 +26,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $role = $_POST['role'];
     $newPassword = $_POST['new_password'] ?? '';
     
-    // Handle profile photo upload
     $profilePhoto = $userData['profile_photo'];
     if (isset($_FILES['profile_photo']) && $_FILES['profile_photo']['error'] == 0) {
         $uploadedFile = $user->uploadProfilePhoto($_FILES['profile_photo']);
         if ($uploadedFile) {
-            // Delete old photo if not default
             if ($profilePhoto != 'default.jpg' && file_exists('../uploads/' . $profilePhoto)) {
                 unlink('../uploads/' . $profilePhoto);
             }
@@ -43,7 +39,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     
     if ($user->updateUser($id, $username, $email, $role, $profilePhoto, $newPassword)) {
         $success = "User updated successfully!";
-        // Refresh user data
         $userData = $user->getUserById($id);
     } else {
         $error = "Failed to update user";
@@ -62,7 +57,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 </head>
 <body>
     <div class="page-wrapper">
-        <!-- Navbar -->
         <nav class="navbar">
             <div class="container">
                 <a href="dashboard.php" class="navbar-brand">
@@ -79,7 +73,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             </div>
         </nav>
 
-        <!-- Main Content -->
         <div class="container">
             <div class="row justify-content-center">
                 <div class="col-md-8">
@@ -182,7 +175,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             </div>
         </div>
 
-        <!-- Footer -->
         <footer>
             <div class="container">
                 <p class="text-center">&copy; 2024 User Management System. All rights reserved.</p>
@@ -191,7 +183,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     </div>
 
     <script>
-        // Image preview functionality
         const uploadArea = document.getElementById('uploadArea');
         const fileInput = document.getElementById('profile_photo');
         const newImagePreview = document.getElementById('newImagePreview');
@@ -199,23 +190,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         const removeBtn = document.getElementById('removeImage');
         const currentPhoto = document.getElementById('currentPhoto');
 
-        // Click on upload area triggers file input
         uploadArea.addEventListener('click', function() {
             fileInput.click();
         });
 
-        // Handle file selection
         fileInput.addEventListener('change', function(e) {
             const file = e.target.files[0];
             if (file) {
-                // Check file size (max 5MB)
                 if (file.size > 5 * 1024 * 1024) {
                     alert('File is too large. Maximum size is 5MB.');
                     fileInput.value = '';
                     return;
                 }
 
-                // Check file type
                 const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif'];
                 if (!validTypes.includes(file.type)) {
                     alert('Please upload a valid image file (JPG, JPEG, PNG, GIF)');
@@ -234,7 +221,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             }
         });
 
-        // Remove image
         removeBtn.addEventListener('click', function() {
             fileInput.value = '';
             newImagePreview.style.display = 'none';
@@ -243,7 +229,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             previewImg.src = '#';
         });
 
-        // Drag and drop functionality
         uploadArea.addEventListener('dragover', function(e) {
             e.preventDefault();
             this.style.borderColor = 'var(--success-color)';

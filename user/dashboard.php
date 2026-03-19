@@ -1,16 +1,14 @@
 <?php
-require_once '../classes/User.php';
+require_once '../config/db.php';
 session_start();
 
 $user = new User();
 
-// Check if user is logged in
 if (!$user->isLoggedIn()) {
     header("Location: ../login.php");
     exit();
 }
 
-// Get current user data
 $userData = $user->getUserById($_SESSION['user_id']);
 ?>
 
@@ -25,7 +23,6 @@ $userData = $user->getUserById($_SESSION['user_id']);
 </head>
 <body>
     <div class="page-wrapper">
-        <!-- Navbar -->
         <nav class="navbar">
             <div class="container">
                 <a href="dashboard.php" class="navbar-brand">
@@ -42,7 +39,6 @@ $userData = $user->getUserById($_SESSION['user_id']);
             </div>
         </nav>
 
-        <!-- Main Content -->
         <div class="container">
             <div class="row">
                 <div class="col-md-4">
@@ -111,7 +107,6 @@ $userData = $user->getUserById($_SESSION['user_id']);
             </div>
         </div>
 
-        <!-- Footer -->
         <footer>
             <div class="container">
                 <p class="text-center">&copy; 2026 Russell Evan Loquinario User Management System. All rights reserved.</p>

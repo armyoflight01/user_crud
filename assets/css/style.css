@@ -1,11 +1,11 @@
 /* ===== RESET AND BASE STYLES ===== */
 :root {
-    --primary-color: #4361ee;
-    --secondary-color: #3f37c9;
+    --primary-color: #43aaee;
+    --secondary-color: #3ad947;
     --success-color: #4cc9f0;
     --danger-color: #f72585;
     --warning-color: #f8961e;
-    --info-color: #4895ef;
+    --info-color: #4b48ef;
     --light-color: #f8f9fa;
     --dark-color: #212529;
     --gray-color: #6c757d;
@@ -23,7 +23,7 @@
 
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #4465f7 0%, #764ba2 100%);
     min-height: 100vh;
     color: var(--dark-color);
     line-height: 1.6;

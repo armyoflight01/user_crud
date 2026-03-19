@@ -1,4 +1,5 @@
 <?php
+require_once 'config/db.php';
 session_start();
 ?>
 
@@ -13,7 +14,6 @@ session_start();
 </head>
 <body>
     <div class="page-wrapper">
-        <!-- Navbar -->
         <nav class="navbar">
             <div class="container">
                 <a href="index.php" class="navbar-brand">
@@ -45,7 +45,6 @@ session_start();
             </div>
         </nav>
 
-        <!-- Hero Section -->
         <div class="container">
             <div class="jumbotron">
                 <h1><i class="fas fa-users-cog"></i> User Management System</h1>
@@ -62,7 +61,6 @@ session_start();
                 <?php endif; ?>
             </div>
 
-            <!-- Features Grid -->
             <div class="grid">
                 <div class="dashboard-card text-center">
                     <div class="card-icon primary">
@@ -94,7 +92,6 @@ session_start();
                 </div>
             </div>
 
-            <!-- Demo Credentials -->
             <div class="card mt-4">
                 <div class="card-header">
                     <h4><i class="fas fa-info-circle"></i> Demo Credentials</h4>
@@ -119,7 +116,6 @@ session_start();
             </div>
         </div>
 
-        <!-- Footer -->
         <footer>
             <div class="container">
                 <p class="text-center">&copy; 2026 Russell Evan Loquinario User Management System. All rights reserved.</p>
